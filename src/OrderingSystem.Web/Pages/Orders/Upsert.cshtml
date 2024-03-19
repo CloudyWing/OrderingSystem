@@ -1,0 +1,147 @@
+﻿@page
+@model CloudyWing.OrderingSystem.Web.Pages.Orders.UpsertModel
+@{
+    ViewBag.Title = "點餐";
+}
+<h2>@ViewBag.Title</h2>
+<hr />
+<form method="post" class="form-horizontal" role="form" v-on:submit="validateBeforeSubmit">
+    <div asp-validation-summary="All" class="text-danger form-text"></div>
+    <input type="hidden" asp-for="Data.Id" v-model:value="id" test="@Model.Data.Id" />
+    <div class="mb-3 row">
+        <label asp-for="Data.Date" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input type="date" asp-for="Data.Date" class="form-control" v-model:value="date" />
+            <span vee-validation-for="Data.Date" class="text-danger form-text"></span>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label">總共金額：</label>
+        <span class="col-md-10">{{ money }}</span>
+    </div>
+    <div class="mb-3 row">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">商品</th>
+                        <th scope="col">分類</th>
+                        <th scope="col">價格</th>
+                        <th scope="col">數量</th>
+                        <th scope="col">總額</th>
+                        <th scope="col">備註</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(detail,index) in details">
+                        <td scope="row">{{ index+1 }}</td>
+                        <td scope="row">
+                            <select class="form-select" v-model="detail.productId">
+                                <option v-for="product in products" v-bind:value="product.id">{{ product.name }}</option>
+                            </select>
+                        </td>
+                        <td scope="row">{{ detail.categoryName }}</td>
+                        <td scope="row">{{ detail.productPrice }}</td>
+                        <td scope="row"><input v-model="details[index].quantity" /></td>
+                        <td scope="row">{{ detail.cost }}</td>
+                        <td scope="row"><input v-model="details[index].remark" /></td>
+                        <td scope="row">
+                            <button type="button" class="btn btn-primary" v-on:click="addRowHandler">新增一列</button>
+                            <button type="button" class="btn btn-secondary" v-if="details.length>1" v-on:click="removeRowHandler(index)">刪除一列</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <hr class="my-4">
+    <button type="button" class="btn btn-primary" v-on:click="submitHandler">送出</button>
+    <a class="btn btn-secondary" asp-page="Index">返回</a>
+</form>
+
+
+@section Scripts {
+    <script>
+        let pageMixin = {
+            data: {
+                id: '@Model.Data.Id',
+                date: '@Model.Data.Date.ToString("yyyy-MM-dd")',
+                details: [{ productId: '', categoryName: '', productPrice: 0, quantity: 0, cost: 0, remark: '' }],
+                products: [],
+                productCategories: []
+            },
+            methods: {
+                addRowHandler: function () {
+                    this.details.push({ productId: '', categoryName: '', productPrice: 0, quantity: 0, cost: 0, remark: '' });
+                },
+                removeRowHandler: function (index) {
+                    this.details.splice(index, 1);
+                },
+                submitHandler: function () {
+                    let params = { id: (this.id === '' ? null : this.id), date: this.date, details: this.details };
+                    axios.post('@Url.Page("Upsert", "Upsert")', params)
+                        .then(response => {
+                            if (response.data.message) {
+                                alert(response.data.message);
+                            }
+                            if (response.data.isOk) {
+                                location.href = '@Url.Page("Index")';
+                            };
+                        }).catch(thrown => {
+                            alert(thrown);
+                        });
+                }
+            },
+            computed: {
+                money: function () {
+                    let money = 0;
+                    for (let i in this.details) {
+                        for (let j in this.products) {
+                            if (this.details[i].productId === this.products[j].id) {
+
+                                for (let k in this.productCategories) {
+                                    if (this.products[j].categoryId === this.productCategories[k].id) {
+                                        this.details[i].categoryName = this.productCategories[k].name;
+                                    }
+                                }
+                                this.details[i].productPrice = this.products[j].price;
+                                this.details[i].cost = this.details[i].productPrice * (isNaN(this.details[i].quantity) ? 0 : this.details[i].quantity);
+                            }
+
+                        }
+                        money += isNaN(this.details[i].cost) ? 0 : this.details[i].cost;
+                    }
+                    return money;
+                }
+            },
+            mounted: function () {
+                axios.post('@Url.Page("Upsert", "GetProducts")')
+                    .then(response => {
+                        this.products = response.data.data;
+                    }).catch(thrown => {
+                        alert(thrown);
+                    });
+                axios.post('@Url.Page("Upsert", "GetProductCategories")')
+                    .then(response => {
+                        this.productCategories = response.data.data;
+                    }).catch(thrown => {
+                        alert(thrown);
+                    });
+                @if (Model.Data.IsExisting) {
+                    <text>
+                        axios.post('@Url.Page("Upsert", "GetDetails")', { id: this.id })
+                            .then(response => {
+                                this.details = response.data.data;
+                            }).catch(thrown => {
+                                alert(thrown);
+                            });
+                    </text>
+                }
+            }
+        }
+
+        mixins.push(pageMixin);
+    </script>
+}

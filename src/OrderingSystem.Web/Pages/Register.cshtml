@@ -1,0 +1,42 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewBag.Title = "註冊";
+}
+
+<h2>@ViewBag.Title</h2>
+<hr />
+<form method="post" class="form-horizontal" role="form" v-on:submit="validateBeforeSubmit">
+    <div asp-validation-summary="All" class="text-danger form-text"></div>
+    <div class="mb-3">
+        <label asp-for="Data.Email" class="form-label"></label>
+        <div class="col-md-10">
+            <input type="text" asp-for="Data.Email" class="form-control" v-formatter.trim />
+            <span vee-validation-for="Data.Email" class="text-danger form-text"></span>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Data.Name" class="form-label"></label>
+        <div class="col-md-10">
+            <input type="text" asp-for="Data.Name" class="form-control" v-formatter.trim />
+            <span vee-validation-for="Data.Name" class="text-danger form-text"></span>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Data.Password" class="form-label"></label>
+        <div class="col-md-10">
+            <input type="password" asp-for="Data.Password" class="form-control" v-formatter.trim />
+            <span vee-validation-for="Data.Password" class="text-danger form-text"></span>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Data.ComfirmedPassword" class="form-label"></label>
+        <div class="col-md-10">
+            <input type="password" asp-for="Data.ComfirmedPassword" class="form-control" v-formatter.trim />
+            <span vee-validation-for="Data.ComfirmedPassword" class="text-danger form-text"></span>
+        </div>
+    </div>
+    <hr class="my-4">
+    <input type="submit" value="儲存" class="btn btn-primary" />
+    <a class="btn btn-info" asp-page="Index">返回</a>
+</form>

@@ -1,0 +1,35 @@
+﻿@page
+@model CloudyWing.OrderingSystem.Web.Pages.Products.UpsertModel
+@{
+    ViewBag.Title = "商品維護";
+}
+<h2>@ViewBag.Title</h2>
+<hr />
+<form method="post" class="form-horizontal" role="form" v-on:submit="validateBeforeSubmit">
+    <div asp-validation-summary="All" class="text-danger form-text"></div>
+    <input type="hidden" asp-for="Data.Id" />
+    <div class="mb-3">
+        <label asp-for="Data.Name" class="form-label"></label>
+        <div class="col-md-10">
+            <input type="text" asp-for="Data.Name" class="form-control" v-formatter.trim />
+            <span vee-validation-for="Data.Name" class="text-danger form-text"></span>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Data.Price" class="form-label"></label>
+        <div class="col-md-10">
+            <input type="text" asp-for="Data.Price" class="form-control" v-formatter.trim />
+            <span vee-validation-for="Data.Price" class="text-danger form-text"></span>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Data.CategoryId" class="form-label"></label>
+        <div class="col-md-10">
+            <select asp-for="Data.CategoryId" asp-items="Model.Categories" class="form-control"></select>
+            <span vee-validation-for="Data.CategoryId" class="text-danger form-text"></span>
+        </div>
+    </div>
+    <hr class="my-4">
+    <button type="submit" class="btn btn-primary">送出</button>
+    <a class="btn btn-secondary" asp-page="Index">返回</a>
+</form>
