@@ -1,0 +1,82 @@
+﻿@page
+@model CloudyWing.OrderingSystem.Web.Pages.Products.IndexModel
+@{
+    ViewBag.Title = "商品維護";
+}
+<h2>@ViewBag.Title</h2>
+<form method="post">
+    <p>
+        <a class="btn btn-primary" asp-page="Upsert">新增</a>
+    </p>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover" v-if="records.length > 0">
+            <thead>
+                <tr>
+                    <th scope="col">商品名稱</th>
+                    <th scope="col">單價</th>
+                    <th scope="col">分類</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="record in records">
+                    <td scope="row">{{ record.name }}</td>
+                    <td scope="row">{{ record.price }}</td>
+                    <td scope="row">{{ record.categoryName }}</td>
+                    <td scope="row">
+                        <a :href="'@Url.Page("Upsert")?id=' + record.id" class="btn btn-primary" role="button">編輯</a>
+                        <button type="button" v-if="record.displayOrder!==1" class="btn btn-secondary" v-on:click="moveUpHandler(record.id)">上移</button>
+                        <button type="button" v-if="record.displayOrder!==records.length" class="btn btn-secondary" v-on:click="moveDownHandler(record.id)">下移</button>
+                        <button type="button" class="btn btn-danger" v-on:click="deleteHandler(record.id)">刪除</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        var pageMixin = {
+            data: {
+                records: []
+            },
+            methods: {
+                moveUpHandler: function (id) {
+                    axios.post('@Url.Page("Index", "MoveUp")', { id: id })
+                        .then(response => {
+                            this.records = response.data.data;
+                        }).catch(thrown => {
+                            alert(thrown);
+                        });
+                },
+                moveDownHandler: function (id) {
+                    axios.post('@Url.Page("Index", "MoveDown")', { id: id })
+                        .then(response => {
+                            this.records = response.data.data;
+                        }).catch(thrown => {
+                            alert(thrown);
+                        });
+                },
+                deleteHandler: function (id) {
+                    axios.post('@Url.Page("Index", "Delete")', { id: id })
+                        .then(response => {
+                            this.records = response.data.data;
+                        }).catch(thrown => {
+                            alert(thrown);
+                        });
+                }
+            },
+            mounted: function () {
+                axios.post('@Url.Page("Index")')
+                    .then(response => {
+                        this.records = response.data;
+                    }).catch(thrown => {
+                        alert(thrown);
+                    });
+            }
+        }
+
+        mixins.push(pageMixin);
+    </script>
+}
