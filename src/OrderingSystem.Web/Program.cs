@@ -6,6 +6,7 @@ using CloudyWing.OrderingSystem.Infrastructure.DependencyInjection;
 using CloudyWing.OrderingSystem.Web.Infrastructure.Localizations;
 using CloudyWing.OrderingSystem.Web.Infrastructure.Localizations.Resources;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -49,6 +50,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 WebApplication app = builder.Build();
 
+OrderingSystemAutoMapper.Configure(
+    builder.Configuration["AutoMapper:LicenseKey"] ?? Environment.GetEnvironmentVariable("AUTOMAPPER_LICENSE_KEY"),
+    app.Services.GetRequiredService<ILoggerFactory>());
+
 string[] supportedCultures = ["zh-TW"];
 RequestLocalizationOptions localizationOptions = new RequestLocalizationOptions()
     .SetDefaultCulture(supportedCultures[0])
@@ -59,7 +64,7 @@ app.UseRequestLocalization(localizationOptions);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
-    ApplicationDbContext dbContext = app.Services.GetService<ApplicationDbContext>()!;
+    ApplicationDbContext dbContext = app.Services.GetRequiredService<ApplicationDbContext>();
     dbContext.Database.EnsureCreated();
 } else {
     app.UseExceptionHandler("/Error");

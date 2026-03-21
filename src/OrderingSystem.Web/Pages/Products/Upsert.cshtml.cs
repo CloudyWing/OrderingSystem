@@ -5,55 +5,60 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace CloudyWing.OrderingSystem.Web.Pages.Products {
-    [Authorize(Roles = "Administrator")]
-    public class UpsertModel : PageModelBase {
-        private readonly ProductAppService productAppService;
-        private IEnumerable<SelectListItem>? categories;
+namespace CloudyWing.OrderingSystem.Web.Pages.Products;
 
-        public UpsertModel(ProductAppService productAppService) {
-            ExceptionUtils.ThrowIfNull(() => productAppService);
+[Authorize(Roles = "Administrator")]
+public class UpsertModel : PageModelBase {
+    private readonly ProductAppService productAppService;
+    private IEnumerable<SelectListItem>? categories;
 
-            this.productAppService = productAppService;
+    public UpsertModel(ProductAppService productAppService) {
+        ExceptionUtils.ThrowIfNull(() => productAppService);
+
+        this.productAppService = productAppService;
+    }
+
+    [BindProperty]
+    public UpsertViewModel? Data { get; set; }
+
+    public IEnumerable<SelectListItem> Categories {
+        get {
+            categories ??= productAppService.GetCategoriesAsync().GetAwaiter().GetResult();
+
+            return categories;
+        }
+    }
+
+    public async Task<ActionResult> OnGetAsync(Guid? id) {
+        Data = id.HasValue
+            ? await productAppService.GetItemAsync(id.Value)
+            : new UpsertViewModel();
+
+        if (Data is null) {
+            return NotFound();
         }
 
-        [BindProperty]
-        public UpsertViewModel? Data { get; set; }
+        return Page();
+    }
 
-        public IEnumerable<SelectListItem> Categories {
-            get {
-                categories ??= productAppService.GetCategoriesAsync().GetAwaiter().GetResult();
-
-                return categories;
-            }
-        }
-
-        public async Task<ActionResult> OnGetAsync(Guid? id) {
-            Data = id.HasValue
-                ? await productAppService.GetItemAsync(id.Value)
-                : new UpsertViewModel();
-
-            if (Data is null) {
-                return NotFound();
-            }
-
+    public async Task<IActionResult> OnPostAsync() {
+        if (!ModelState.IsValid) {
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync() {
-            if (!ModelState.IsValid) {
-                return Page();
-            }
+        UpsertViewModel? productData = Data;
+        if (productData is null) {
+            return Page();
+        }
 
-            if (await productAppService.UpsertAsync(Data!)) {
-                SetFormResult(FormResultLevel.Success, "¿x¶s¶®•\°C");
+        if (await productAppService.UpsertAsync(productData)) {
+            SetFormResult(FormResultLevel.Success, "ÂÑ≤Â≠òÊàêÂäü„ÄÇ");
 
-                return RedirectToPage(nameof(Index));
-            } else {
-                SetFormResult(FormResultLevel.Danger, "¿x¶s•¢±—°C");
+            return RedirectToPage(nameof(Index));
+        } else {
+            SetFormResult(FormResultLevel.Danger, "ÂÑ≤Â≠òÂ§±Êïó„ÄÇ");
 
-                return Page();
-            }
+            return Page();
         }
     }
 }

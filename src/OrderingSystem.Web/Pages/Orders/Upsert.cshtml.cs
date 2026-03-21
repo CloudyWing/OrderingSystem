@@ -4,56 +4,55 @@ using CloudyWing.OrderingSystem.Web.Model.OrderModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using OrderingSystem.Model;
 
-namespace CloudyWing.OrderingSystem.Web.Pages.Orders {
-    [Authorize(Roles = "Administrator,Member")]
-    public class UpsertModel : PageModelBase {
-        private readonly OrderAppService orderAppService;
+namespace CloudyWing.OrderingSystem.Web.Pages.Orders;
 
-        public UpsertModel(OrderAppService orderAppService) {
-            ExceptionUtils.ThrowIfNull(() => orderAppService);
+[Authorize(Roles = "Administrator,Member")]
+public class UpsertModel : PageModelBase {
+    private readonly OrderAppService orderAppService;
 
-            this.orderAppService = orderAppService;
+    public UpsertModel(OrderAppService orderAppService) {
+        ExceptionUtils.ThrowIfNull(() => orderAppService);
+
+        this.orderAppService = orderAppService;
+    }
+
+    [BindProperty]
+    public UpsertViewModel Data { get; set; } = new();
+
+    public async Task OnGetAsync(Guid? id) {
+        Data = new UpsertViewModel {
+            Id = id,
+            Date = id.HasValue
+                ? await orderAppService.GetOrderDateAsync(id.Value)
+                : DateTime.Today
+        };
+    }
+
+    public async Task<ActionResult> OnPostUpsertAsync([FromBody] UpsertViewModel viewModel) {
+        ResponseResult result = new();
+        ModelState.Clear();
+
+        if (!TryValidateModel(viewModel)) {
+            result.IsOk = false;
+            result.Message = ModelState.GetFirstErrorMessage();
+        } else {
+            result.IsOk = await orderAppService.UpsertAsync(viewModel);
+            result.Message = result.IsOk ? "ÈªûÈ§êÊàêÂäü„ÄÇ" : "ÈªûÈ§êÂ§±Êïó„ÄÇ";
         }
 
-        [BindProperty]
-        public UpsertViewModel? Data { get; set; }
+        return new JsonResult(result);
+    }
 
-        public async void OnGet(Guid? id) {
-            Data = new UpsertViewModel {
-                Id = id,
-                Date = id.HasValue
-                    ? await orderAppService.GetOrderDateAsync(id.Value)
-                    : DateTime.Today
-            };
-        }
+    public async Task<IActionResult> OnPostGetDetailsAsync([FromBody] Command command) {
+        return new JsonResult(await orderAppService.GetDetailsByUpsertAsync(command.Id));
+    }
 
-        public async Task<ActionResult> OnPostUpsertAsync([FromBody] UpsertViewModel viewModel) {
-            ResponseResult result = new();
-            ModelState.Clear();
+    public async Task<IActionResult> OnPostGetProductCategoriesAsync() {
+        return new JsonResult(await orderAppService.GetProductCategoriesAsync());
+    }
 
-            if (!TryValidateModel(viewModel)) {
-                result.IsOk = false;
-                result.Message = ModelState.GetFirstErrorMessage();
-            } else {
-                result.IsOk = await orderAppService.UpsertAsync(viewModel);
-                result.Message = result.IsOk ? "¬I¿\¶®•\°C" : "¬I¿\•¢±—°C";
-            }
-
-            return new JsonResult(result);
-        }
-
-        public async Task<IActionResult> OnPostGetDetailsAsync([FromBody] Command command) {
-            return new JsonResult(await orderAppService.GetDetailsByUpsertAsync(command.Id));
-        }
-
-        public async Task<IActionResult> OnPostGetProductCategoriesAsync() {
-            return new JsonResult(await orderAppService.GetProductCategoriesAsync());
-        }
-
-        public async Task<IActionResult> OnPostGetProductsAsync() {
-            return new JsonResult(await orderAppService.GetProductsAsync());
-        }
+    public async Task<IActionResult> OnPostGetProductsAsync() {
+        return new JsonResult(await orderAppService.GetProductsAsync());
     }
 }

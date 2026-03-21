@@ -1,9 +1,9 @@
-﻿namespace CloudyWing.OrderingSystem.Web.Model.OrderModel {
-    public class IndexListItemViewModel {
-        public Guid Id { get; set; }
+namespace CloudyWing.OrderingSystem.Web.Model.OrderModel;
 
-        public DateTime Date { get; set; }
+public class IndexListItemViewModel {
+    public Guid Id { get; set; }
 
-        public int Money { get; set; }
-    }
+    public DateTime Date { get; set; }
+
+    public int Money { get; set; }
 }

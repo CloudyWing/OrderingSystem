@@ -1,30 +1,30 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Autofac;
 using CloudyWing.OrderingSystem.Infrastructure.Util;
 using Module = Autofac.Module;
 
-namespace CloudyWing.OrderingSystem.Infrastructure.DependencyInjection {
-    public class DependencyInjectionModule : Module {
-        private readonly Assembly[] assemblies;
+namespace CloudyWing.OrderingSystem.Infrastructure.DependencyInjection;
 
-        public DependencyInjectionModule(params Assembly[] assemblies) {
-            ExceptionUtils.ThrowIfNull(() => assemblies);
+public class DependencyInjectionModule : Module {
+    private readonly Assembly[] assemblies;
 
-            this.assemblies = assemblies;
-        }
+    public DependencyInjectionModule(params Assembly[] assemblies) {
+        ExceptionUtils.ThrowIfNull(() => assemblies);
 
-        protected override void Load(ContainerBuilder builder) {
-            builder.RegisterAssemblyTypes(assemblies)
-                .Where(x => x.IsAssignableTo(typeof(ITransientDependency)))
-                .AsImplementedInterfaces()
-                .AsSelf()
-                .InstancePerDependency();
+        this.assemblies = assemblies;
+    }
 
-            builder.RegisterAssemblyTypes(assemblies)
-                .Where(x => x.IsAssignableTo(typeof(IScopedDependency)))
-                .AsImplementedInterfaces()
-                .AsSelf()
-                .InstancePerLifetimeScope();
-        }
+    protected override void Load(ContainerBuilder builder) {
+        builder.RegisterAssemblyTypes(assemblies)
+            .Where(x => x.IsAssignableTo(typeof(ITransientDependency)))
+            .AsImplementedInterfaces()
+            .AsSelf()
+            .InstancePerDependency();
+
+        builder.RegisterAssemblyTypes(assemblies)
+            .Where(x => x.IsAssignableTo(typeof(IScopedDependency)))
+            .AsImplementedInterfaces()
+            .AsSelf()
+            .InstancePerLifetimeScope();
     }
 }

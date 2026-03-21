@@ -3,43 +3,48 @@ using CloudyWing.OrderingSystem.Web.Model;
 using CloudyWing.OrderingSystem.Web.Model.RegisterModel;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CloudyWing.OrderingSystem.Web.Pages {
-    public class RegisterModel : PageModelBase {
-        private readonly RegisterAppService registerAppService;
+namespace CloudyWing.OrderingSystem.Web.Pages;
 
-        public RegisterModel(RegisterAppService registerAppService) {
-            ExceptionUtils.ThrowIfNull(() => registerAppService);
+public class RegisterModel : PageModelBase {
+    private readonly RegisterAppService registerAppService;
 
-            this.registerAppService = registerAppService;
-        }
+    public RegisterModel(RegisterAppService registerAppService) {
+        ExceptionUtils.ThrowIfNull(() => registerAppService);
 
-        [BindProperty]
-        public RegisterViewModel? Data { get; set; }
+        this.registerAppService = registerAppService;
+    }
 
-        public void OnGet() {
-            Data = new RegisterViewModel();
-        }
+    [BindProperty]
+    public RegisterViewModel? Data { get; set; }
 
-        public async Task<IActionResult> OnPostAsync() {
-            if (!ModelState.IsValid) {
-                return Page();
-            }
+    public void OnGet() {
+        Data = new RegisterViewModel();
+    }
 
-            RegisterResult result = await registerAppService.RegisterAsync(Data!);
-
-            switch (result) {
-                case RegisterResult.Success:
-                    SetFormResult(FormResultLevel.Success, "µù¥U¦¨¥\¡C");
-                    return RedirectToPage(nameof(Index));
-                case RegisterResult.Fail:
-                    ModelState.AddModelError("", "µù¥U¥¢±Ñ¡C");
-                    break;
-                case RegisterResult.EmailExists:
-                    ModelState.AddModelError($"{nameof(Data)}.{nameof(Data.Email)}", "¹q¤l«H½c¤wµù¥U¡C");
-                    break;
-            }
-
+    public async Task<IActionResult> OnPostAsync() {
+        if (!ModelState.IsValid) {
             return Page();
         }
+
+        RegisterViewModel? registerData = Data;
+        if (registerData is null) {
+            return Page();
+        }
+
+        RegisterResult result = await registerAppService.RegisterAsync(registerData);
+
+        switch (result) {
+            case RegisterResult.Success:
+                SetFormResult(FormResultLevel.Success, "è¨»å†ŠæˆåŠŸã€‚");
+                return RedirectToPage(nameof(Index));
+            case RegisterResult.Fail:
+                ModelState.AddModelError("", "è¨»å†Šå¤±æ•—ã€‚");
+                break;
+            case RegisterResult.EmailExists:
+                ModelState.AddModelError($"{nameof(Data)}.{nameof(Data.Email)}", "é›»å­ä¿¡ç®±å·²è¨»å†Šã€‚");
+                break;
+        }
+
+        return Page();
     }
 }

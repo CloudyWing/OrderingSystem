@@ -3,35 +3,34 @@ using CloudyWing.OrderingSystem.Web.Model;
 using CloudyWing.OrderingSystem.Web.Model.ProductCategoryModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OrderingSystem.Model;
 
-namespace CloudyWing.OrderingSystem.Web.Pages.ProductCategories {
-    [Authorize(Roles = "Administrator")]
-    public partial class IndexModel : PageModelBase {
-        private readonly ProductCategoryAppService productCategoryAppService;
+namespace CloudyWing.OrderingSystem.Web.Pages.ProductCategories;
 
-        public IndexModel(ProductCategoryAppService productCategoryAppService) {
-            ExceptionUtils.ThrowIfNull(() => productCategoryAppService);
+[Authorize(Roles = "Administrator")]
+public partial class IndexModel : PageModelBase {
+    private readonly ProductCategoryAppService productCategoryAppService;
 
-            this.productCategoryAppService = productCategoryAppService;
-        }
+    public IndexModel(ProductCategoryAppService productCategoryAppService) {
+        ExceptionUtils.ThrowIfNull(() => productCategoryAppService);
 
-        public void OnGet() { }
+        this.productCategoryAppService = productCategoryAppService;
+    }
 
-        public async Task<IActionResult> OnPostAsync() {
-            return new JsonResult(await productCategoryAppService.GetListAsync());
-        }
+    public void OnGet() { }
 
-        public async Task<IActionResult> OnPostMoveUpAsync([FromBody] Command command) {
-            return new JsonResult(await productCategoryAppService.MoveUpAsync(command.Id));
-        }
+    public async Task<IActionResult> OnPostAsync() {
+        return new JsonResult(await productCategoryAppService.GetListAsync());
+    }
 
-        public async Task<IActionResult> OnPostMoveDownAsync([FromBody] Command command) {
-            return new JsonResult(await productCategoryAppService.MoveDownAsync(command.Id));
-        }
+    public async Task<IActionResult> OnPostMoveUpAsync([FromBody] Command command) {
+        return new JsonResult(await productCategoryAppService.MoveUpAsync(command.Id));
+    }
 
-        public async Task<IActionResult> OnPostDeleteAsync([FromBody] Command command) {
-            return new JsonResult(await productCategoryAppService.DeleteAsync(command.Id));
-        }
+    public async Task<IActionResult> OnPostMoveDownAsync([FromBody] Command command) {
+        return new JsonResult(await productCategoryAppService.MoveDownAsync(command.Id));
+    }
+
+    public async Task<IActionResult> OnPostDeleteAsync([FromBody] Command command) {
+        return new JsonResult(await productCategoryAppService.DeleteAsync(command.Id));
     }
 }

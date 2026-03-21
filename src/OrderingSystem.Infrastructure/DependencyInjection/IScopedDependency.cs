@@ -1,4 +1,4 @@
-﻿namespace CloudyWing.OrderingSystem.Infrastructure.DependencyInjection {
-    public interface IScopedDependency {
-    }
+namespace CloudyWing.OrderingSystem.Infrastructure.DependencyInjection;
+
+public interface IScopedDependency {
 }

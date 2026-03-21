@@ -31,7 +31,7 @@
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                 <li><a asp-area="" asp-page="/Index" class="nav-link px-2 text-white"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Home</font></font></a></li>
                 <li><a asp-area="" asp-page="/Privacy" class="nav-link px-2 text-white"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Privacy</font></font></a></li>
-                @if (User.Identity.IsAuthenticated) {
+                @if (User.Identity?.IsAuthenticated == true) {
                     @if (User.IsInRole(Role.Administrator.ToString())) {
                         <li><a asp-area="" asp-page="/ProductCategories/Index" class="nav-link px-2 text-white"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">商品分類維護</font></font></a></li>
                         <li><a asp-area="" asp-page="/Products/Index" class="nav-link px-2 text-white"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">商品維護</font></font></a></li>
@@ -40,8 +40,8 @@
                 }
             </ul>
             <div class="col-md-3 text-end">
-                @if (User.Identity.IsAuthenticated) {
-                    <font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Hello, @User.Identity.Name !</font></font>
+                @if (User.Identity?.IsAuthenticated == true) {
+                    <font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Hello, @User.Identity?.Name !</font></font>
                     <a asp-area="" asp-page="/Logout" class="btn btn-outline-light me-2"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">登出</font></font></a>
                 } else {
                     <a asp-area="" asp-page="/Login" class="btn btn-outline-light me-2"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">登入</font></font></a>
@@ -104,11 +104,12 @@
             },
             created: function () {
         @if (ViewContext.ViewData.ModelState.ErrorCount > 0) {
-            foreach (var pair in ViewContext.ViewData.ModelState.Where(x => x.Value.Errors.Any())) {
+            foreach (var pair in ViewContext.ViewData.ModelState.Where(x => x.Value?.Errors.Any() == true)) {
+                string errorMessage = pair.Value?.Errors.FirstOrDefault()?.ErrorMessage ?? string.Empty;
                 <text>
                             this.$validator.errors.add({
                                 field: '@pair.Key',
-                                msg: '@Html.Raw(pair.Value.Errors.First().ErrorMessage)'
+                                msg: '@Html.Raw(errorMessage)'
                             });
                 </text>
             }

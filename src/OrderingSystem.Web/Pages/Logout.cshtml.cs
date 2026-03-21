@@ -3,20 +3,20 @@ using CloudyWing.OrderingSystem.Web.Model;
 using CloudyWing.OrderingSystem.Web.Model.LoginModel;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CloudyWing.OrderingSystem.Web.Pages {
-    [ValidateAntiForgeryToken]
-    public class LogoutModel : PageModelBase {
-        private readonly LoginAppService loginAppService;
+namespace CloudyWing.OrderingSystem.Web.Pages;
 
-        public LogoutModel(LoginAppService loginAppService) {
-            ExceptionUtils.ThrowIfNull(() => loginAppService);
+[ValidateAntiForgeryToken]
+public class LogoutModel : PageModelBase {
+    private readonly LoginAppService loginAppService;
 
-            this.loginAppService = loginAppService;
-        }
+    public LogoutModel(LoginAppService loginAppService) {
+        ExceptionUtils.ThrowIfNull(() => loginAppService);
 
-        public async Task<IActionResult> OnGetAsync() {
-            await loginAppService.LogoutAsync();
-            return RedirectToPage("./Index");
-        }
+        this.loginAppService = loginAppService;
+    }
+
+    public async Task<IActionResult> OnGetAsync() {
+        await loginAppService.LogoutAsync();
+        return RedirectToPage("./Index");
     }
 }

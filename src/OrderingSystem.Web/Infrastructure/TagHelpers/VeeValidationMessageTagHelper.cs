@@ -1,26 +1,26 @@
-﻿using CloudyWing.OrderingSystem.Infrastructure.Util;
+using CloudyWing.OrderingSystem.Infrastructure.Util;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace CloudyWing.OrderingSystem.Web.Infrastructure.TagHelpers {
-    [HtmlTargetElement("span", Attributes = ValidationForAttributeName)]
-    public class VeeValidationMessageTagHelper : TagHelper {
-        private const string ValidationForAttributeName = "vee-validation-for";
-        private const string VueShow = "v-show";
+namespace CloudyWing.OrderingSystem.Web.Infrastructure.TagHelpers;
 
-        [HtmlAttributeName(ValidationForAttributeName)]
-        public ModelExpression? For { get; set; }
+[HtmlTargetElement("span", Attributes = ValidationForAttributeName)]
+public class VeeValidationMessageTagHelper : TagHelper {
+    private const string ValidationForAttributeName = "vee-validation-for";
+    private const string VueShow = "v-show";
 
-        public override void Process(TagHelperContext context, TagHelperOutput output) {
-            ExceptionUtils.ThrowIfNull(() => context);
-            ExceptionUtils.ThrowIfNull(() => output);
+    [HtmlAttributeName(ValidationForAttributeName)]
+    public ModelExpression? For { get; set; }
 
-            if (For is null) {
-                return;
-            }
+    public override void Process(TagHelperContext context, TagHelperOutput output) {
+        ExceptionUtils.ThrowIfNull(() => context);
+        ExceptionUtils.ThrowIfNull(() => output);
 
-            output.Attributes.Add(VueShow, $"errors.has('{For.Name}')");
-            output.Content.SetHtmlContent($"{{{{ errors.first('{For.Name}') }}}}");
+        if (For is null) {
+            return;
         }
+
+        output.Attributes.Add(VueShow, $"errors.has('{For.Name}')");
+        output.Content.SetHtmlContent($"{{{{ errors.first('{For.Name}') }}}}");
     }
 }

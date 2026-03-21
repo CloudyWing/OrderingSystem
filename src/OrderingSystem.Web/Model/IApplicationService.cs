@@ -1,4 +1,4 @@
-﻿namespace CloudyWing.OrderingSystem.Web.Model {
-    public interface IApplicationService {
-    }
+namespace CloudyWing.OrderingSystem.Web.Model;
+
+public interface IApplicationService {
 }

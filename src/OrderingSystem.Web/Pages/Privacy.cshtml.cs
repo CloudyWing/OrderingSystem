@@ -1,14 +1,14 @@
-﻿using CloudyWing.OrderingSystem.Web.Model;
+using CloudyWing.OrderingSystem.Web.Model;
 
-namespace CloudyWing.OrderingSystem.Web.Pages {
-    public class PrivacyModel : PageModelBase {
-        private readonly ILogger<PrivacyModel> _logger;
+namespace CloudyWing.OrderingSystem.Web.Pages;
 
-        public PrivacyModel(ILogger<PrivacyModel> logger) {
-            _logger = logger;
-        }
+public class PrivacyModel : PageModelBase {
+    private readonly ILogger<PrivacyModel> logger;
 
-        public void OnGet() {
-        }
+    public PrivacyModel(ILogger<PrivacyModel> logger) {
+        this.logger = logger;
+    }
+
+    public void OnGet() {
     }
 }

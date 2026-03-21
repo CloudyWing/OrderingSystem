@@ -1,13 +1,13 @@
-﻿namespace CloudyWing.OrderingSystem.Domain.Services.OrderModel {
-    public class OrderEditor : BasicEditor {
-        public OrderEditor() { }
+namespace CloudyWing.OrderingSystem.Domain.Services.OrderModel;
 
-        public OrderEditor(Guid id) : base(id) { }
+public class OrderEditor : BasicEditor {
+    public OrderEditor() { }
 
-        public ValueWatcher<DateTime> Date { get; set; }
+    public OrderEditor(Guid id) : base(id) { }
 
-        public ValueWatcher<string?> OrderUserEmail { get; set; }
+    public ValueWatcher<DateTime> Date { get; set; }
 
-        public IList<OrderDetailEditor> OrderDetailEditors { get; } = new List<OrderDetailEditor>();
-    }
+    public ValueWatcher<string?> OrderUserEmail { get; set; }
+
+    public IList<OrderDetailEditor> OrderDetailEditors { get; } = new List<OrderDetailEditor>();
 }

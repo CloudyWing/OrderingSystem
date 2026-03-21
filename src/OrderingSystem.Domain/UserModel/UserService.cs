@@ -1,37 +1,40 @@
-﻿using CloudyWing.OrderingSystem.DataAccess.Entities;
+using CloudyWing.OrderingSystem.DataAccess.Entities;
 using CloudyWing.OrderingSystem.Domain.Util;
 using CloudyWing.OrderingSystem.Infrastructure.Util;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace CloudyWing.OrderingSystem.Domain.Services.UserModel {
-    public class UserService(ApplicationDbContext dbContext, ILogger<UserService> logger)
-                : QueryableService<User, UserService>(dbContext, logger) {
-        public async Task<bool> CreateAsync(UserEditor editor) {
-            ExceptionUtils.ThrowIfNull(() => editor);
+namespace CloudyWing.OrderingSystem.Domain.Services.UserModel;
 
-            User entity = Mapper.Map<User>(editor);
-            DbSet.Add(entity);
+public class UserService(ApplicationDbContext dbContext, ILogger<UserService> logger)
+            : QueryableService<User, UserService>(dbContext, logger) {
+    public async Task<bool> CreateAsync(UserEditor editor) {
+        ExceptionUtils.ThrowIfNull(() => editor);
 
-            return await SaveChangesAsync() == 1;
-        }
+        User entity = Mapper.Map<User>(editor);
+        DbSet.Add(entity);
 
-        public async Task<bool> IsExistsAsync(string? email) {
-            ExceptionUtils.ThrowIfNull(() => email);
+        return await SaveChangesAsync() == 1;
+    }
 
-            return await IsExistsAsync(x => x.Email!.ToLower() == email!.ToLower());
-        }
+    public async Task<bool> IsExistsAsync(string? email) {
+        ArgumentException.ThrowIfNullOrWhiteSpace(email);
+        string normalizedEmail = email.Trim().ToLower();
 
-        public async Task<User?> GetSingleOrDefaultAsync(string? email) {
-            ExceptionUtils.ThrowIfNull(() => email);
+        return await IsExistsAsync(x => x.Email != null && x.Email.ToLower() == normalizedEmail);
+    }
 
-            return await GetSingleOrDefaultAsync(x => x.Email!.ToLower() == email!.ToLower());
-        }
+    public async Task<User?> GetSingleOrDefaultAsync(string? email) {
+        ArgumentException.ThrowIfNullOrWhiteSpace(email);
+        string normalizedEmail = email.Trim().ToLower();
 
-        public bool VerifyPasseord(string? password, string? hashedPassword) {
-            ExceptionUtils.ThrowIfNullOrWhiteSpace(() => password);
-            ExceptionUtils.ThrowIfNullOrWhiteSpace(() => hashedPassword);
+        return await DbSet.AsNoTracking().SingleOrDefaultAsync(x => x.Email != null && x.Email.ToLower() == normalizedEmail);
+    }
 
-            return PasswordUtil.ComputeHash(password!) == hashedPassword;
-        }
+    public bool VerifyPassword(string? password, string? hashedPassword) {
+        ArgumentException.ThrowIfNullOrWhiteSpace(password);
+        ArgumentException.ThrowIfNullOrWhiteSpace(hashedPassword);
+
+        return PasswordUtil.ComputeHash(password) == hashedPassword;
     }
 }

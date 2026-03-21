@@ -1,15 +1,15 @@
-﻿using CloudyWing.OrderingSystem.Web.Model;
+using CloudyWing.OrderingSystem.Web.Model;
 
-namespace CloudyWing.OrderingSystem.Web.Pages {
-    public class IndexModel : PageModelBase {
-        private readonly ILogger<IndexModel> _logger;
+namespace CloudyWing.OrderingSystem.Web.Pages;
 
-        public IndexModel(ILogger<IndexModel> logger) {
-            _logger = logger;
-        }
+public class IndexModel : PageModelBase {
+    private readonly ILogger<IndexModel> logger;
 
-        public void OnGet() {
+    public IndexModel(ILogger<IndexModel> logger) {
+        this.logger = logger;
+    }
 
-        }
+    public void OnGet() {
+
     }
 }

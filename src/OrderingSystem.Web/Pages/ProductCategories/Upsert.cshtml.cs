@@ -4,46 +4,51 @@ using CloudyWing.OrderingSystem.Web.Model.ProductCategoryModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CloudyWing.OrderingSystem.Web.Pages.ProductCategories {
-    [Authorize(Roles = "Administrator")]
-    public class UpsertModel : PageModelBase {
-        private readonly ProductCategoryAppService productCategoryAppService;
+namespace CloudyWing.OrderingSystem.Web.Pages.ProductCategories;
 
-        public UpsertModel(ProductCategoryAppService productCategoryAppService) {
-            ExceptionUtils.ThrowIfNull(() => productCategoryAppService);
+[Authorize(Roles = "Administrator")]
+public class UpsertModel : PageModelBase {
+    private readonly ProductCategoryAppService productCategoryAppService;
 
-            this.productCategoryAppService = productCategoryAppService;
+    public UpsertModel(ProductCategoryAppService productCategoryAppService) {
+        ExceptionUtils.ThrowIfNull(() => productCategoryAppService);
+
+        this.productCategoryAppService = productCategoryAppService;
+    }
+
+    [BindProperty]
+    public UpsertViewModel? Data { get; set; }
+
+    public async Task<ActionResult> OnGetAsync(Guid? id) {
+        Data = id.HasValue
+            ? await productCategoryAppService.GetItemAsync(id.Value)
+            : new UpsertViewModel();
+
+        if (Data is null) {
+            return NotFound();
         }
 
-        [BindProperty]
-        public UpsertViewModel? Data { get; set; }
+        return Page();
+    }
 
-        public async Task<ActionResult> OnGetAsync(Guid? id) {
-            Data = id.HasValue
-                ? await productCategoryAppService.GetItemAsync(id.Value)
-                : new UpsertViewModel();
-
-            if (Data is null) {
-                return NotFound();
-            }
-
+    public async Task<IActionResult> OnPostAsync() {
+        if (!ModelState.IsValid) {
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync() {
-            if (!ModelState.IsValid) {
-                return Page();
-            }
+        UpsertViewModel? categoryData = Data;
+        if (categoryData is null) {
+            return Page();
+        }
 
-            if (await productCategoryAppService.UpsertAsync(Data!)) {
-                SetFormResult(FormResultLevel.Success, "¿x¶s¶®•\°C");
+        if (await productCategoryAppService.UpsertAsync(categoryData)) {
+            SetFormResult(FormResultLevel.Success, "ÂÑ≤Â≠òÊàêÂäü„ÄÇ");
 
-                return RedirectToPage(nameof(Index));
-            } else {
-                SetFormResult(FormResultLevel.Danger, "¿x¶s•¢±—°C");
+            return RedirectToPage(nameof(Index));
+        } else {
+            SetFormResult(FormResultLevel.Danger, "ÂÑ≤Â≠òÂ§±Êïó„ÄÇ");
 
-                return Page();
-            }
+            return Page();
         }
     }
 }

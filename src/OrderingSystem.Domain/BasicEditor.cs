@@ -1,16 +1,16 @@
-﻿namespace CloudyWing.OrderingSystem.Domain.Services {
-    public abstract class BasicEditor {
-        protected BasicEditor() {
-        }
+namespace CloudyWing.OrderingSystem.Domain.Services;
 
-        protected BasicEditor(Guid id) {
-            Id = id;
-        }
+public abstract class BasicEditor {
+    protected BasicEditor() {
+    }
 
-        public Guid? Id { get; private set; }
+    protected BasicEditor(Guid id) {
+        Id = id;
+    }
 
-        internal void SetId(Guid id) {
-            Id = id;
-        }
+    public Guid? Id { get; private set; }
+
+    internal void SetId(Guid id) {
+        Id = id;
     }
 }

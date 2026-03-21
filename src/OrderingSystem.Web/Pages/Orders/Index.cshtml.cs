@@ -3,32 +3,31 @@ using CloudyWing.OrderingSystem.Web.Model;
 using CloudyWing.OrderingSystem.Web.Model.OrderModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OrderingSystem.Model;
 
-namespace CloudyWing.OrderingSystem.Web.Pages.Orders {
-    [Authorize(Roles = "Administrator,Member")]
-    public partial class IndexModel : PageModelBase {
-        private readonly OrderAppService orderAppService;
+namespace CloudyWing.OrderingSystem.Web.Pages.Orders;
 
-        public IndexModel(OrderAppService orderAppService) {
-            ExceptionUtils.ThrowIfNull(() => orderAppService);
+[Authorize(Roles = "Administrator,Member")]
+public partial class IndexModel : PageModelBase {
+    private readonly OrderAppService orderAppService;
 
-            this.orderAppService = orderAppService;
-        }
+    public IndexModel(OrderAppService orderAppService) {
+        ExceptionUtils.ThrowIfNull(() => orderAppService);
 
-        public void OnGet() {
-        }
+        this.orderAppService = orderAppService;
+    }
 
-        public async Task<IActionResult> OnPostAsync() {
-            return new JsonResult(await orderAppService.GetListAsync());
-        }
+    public void OnGet() {
+    }
 
-        public async Task<IActionResult> OnPostGetDetailsAsync([FromBody] Command command) {
-            return new JsonResult(await orderAppService.GetDetailsAsync(command.Id));
-        }
+    public async Task<IActionResult> OnPostAsync() {
+        return new JsonResult(await orderAppService.GetListAsync());
+    }
 
-        public async Task<IActionResult> OnPostDeleteAsync([FromBody] Command command) {
-            return new JsonResult(await orderAppService.DeleteAsync(command.Id));
-        }
+    public async Task<IActionResult> OnPostGetDetailsAsync([FromBody] Command command) {
+        return new JsonResult(await orderAppService.GetDetailsAsync(command.Id));
+    }
+
+    public async Task<IActionResult> OnPostDeleteAsync([FromBody] Command command) {
+        return new JsonResult(await orderAppService.DeleteAsync(command.Id));
     }
 }

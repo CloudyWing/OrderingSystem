@@ -1,13 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace CloudyWing.OrderingSystem.Web.Model.ProductCategoryModel {
-    public class UpsertViewModel {
-        public bool IsExisting => Id.HasValue;
+namespace CloudyWing.OrderingSystem.Web.Model.ProductCategoryModel;
 
-        public Guid? Id { get; set; }
+public class UpsertViewModel {
+    public bool IsExisting => Id.HasValue;
 
-        [Display(Name = "商品名稱")]
-        [Required]
-        public string? Name { get; set; }
-    }
+    public Guid? Id { get; set; }
+
+    [Display(Name = "商品分類")]
+    [Required]
+    public string? Name { get; set; }
 }

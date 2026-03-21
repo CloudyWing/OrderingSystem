@@ -2,22 +2,22 @@ using System.Diagnostics;
 using CloudyWing.OrderingSystem.Web.Model;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CloudyWing.OrderingSystem.Web.Pages {
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    [IgnoreAntiforgeryToken]
-    public class ErrorModel : PageModelBase {
-        public string? RequestId { get; set; }
+namespace CloudyWing.OrderingSystem.Web.Pages;
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+[IgnoreAntiforgeryToken]
+public class ErrorModel : PageModelBase {
+    public string? RequestId { get; set; }
 
-        private readonly ILogger<ErrorModel> _logger;
+    public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
-        public ErrorModel(ILogger<ErrorModel> logger) {
-            _logger = logger;
-        }
+    private readonly ILogger<ErrorModel> logger;
 
-        public void OnGet() {
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
-        }
+    public ErrorModel(ILogger<ErrorModel> logger) {
+        this.logger = logger;
+    }
+
+    public void OnGet() {
+        RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
     }
 }

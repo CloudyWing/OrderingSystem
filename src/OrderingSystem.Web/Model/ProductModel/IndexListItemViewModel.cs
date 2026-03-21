@@ -1,13 +1,13 @@
-﻿namespace OrderingSystem.Domain.Services.ProductModel {
-    public class IndexListItemViewModel {
-        public Guid Id { get; set; }
+namespace CloudyWing.OrderingSystem.Web.Model.ProductModel;
 
-        public int DisplayOrder { get; set; }
+public class IndexListItemViewModel {
+    public Guid Id { get; set; }
 
-        public string? Name { get; set; }
+    public int DisplayOrder { get; set; }
 
-        public int Price { get; set; }
+    public string? Name { get; set; }
 
-        public string? CategoryName { get; set; }
-    }
+    public int Price { get; set; }
+
+    public string? CategoryName { get; set; }
 }

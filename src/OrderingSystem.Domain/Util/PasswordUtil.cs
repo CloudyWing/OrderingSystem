@@ -1,16 +1,15 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using System.Text;
-using CloudyWing.OrderingSystem.Infrastructure.Util;
 
-namespace CloudyWing.OrderingSystem.Domain.Util {
-    internal static class PasswordUtil {
-        public static string ComputeHash(string? password) {
-            ExceptionUtils.ThrowIfNullOrWhiteSpace(() => password);
+namespace CloudyWing.OrderingSystem.Domain.Util;
 
-            byte[] bytes = Encoding.UTF8.GetBytes(password!);
-            byte[] hash = SHA512.HashData(bytes);
+internal static class PasswordUtil {
+    public static string ComputeHash(string? password) {
+        ArgumentException.ThrowIfNullOrWhiteSpace(password);
 
-            return Convert.ToBase64String(hash);
-        }
+        byte[] bytes = Encoding.UTF8.GetBytes(password);
+        byte[] hash = SHA512.HashData(bytes);
+
+        return Convert.ToBase64String(hash);
     }
 }

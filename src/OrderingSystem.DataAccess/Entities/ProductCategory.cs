@@ -1,11 +1,11 @@
-﻿namespace CloudyWing.OrderingSystem.DataAccess.Entities {
-    public class ProductCategory {
-        public Guid Id { get; set; }
+namespace CloudyWing.OrderingSystem.DataAccess.Entities;
 
-        public int DisplayOrder { get; set; }
+public class ProductCategory {
+    public Guid Id { get; set; }
 
-        public string? Name { get; set; }
+    public int DisplayOrder { get; set; }
 
-        public IList<Product> Products { get; } = [];
-    }
+    public string? Name { get; set; }
+
+    public IList<Product> Products { get; } = [];
 }
